@@ -31,18 +31,21 @@ class RailFenceCipher:
                 direction = -1
             rail_index += direction
 
-        rails = [[] for _ in range(num_rails)]
+       
+        rails = []
         start = 0
-        for length in rail_lengths:
-            rails.append(cipher_text[start:start + length])
+        for i, length in enumerate(rail_lengths):
+            rails.append(list(cipher_text[start:start + length]))
             start += length
 
         plain_text = ''
         rail_index = 0
         direction = 1
         for _ in range(len(cipher_text)):
-            plain_text += rails[rail_index][0]
-            rails[rail_index] = rails[rail_index][1:]
+          
+            if rails[rail_index]:  # Kiểm tra không rỗng
+                plain_text += rails[rail_index].pop(0)
+            
             if rail_index == 0:
                 direction = 1
             elif rail_index == num_rails - 1:

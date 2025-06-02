@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Thực hành Bảo mật thông tin nâng cao</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: "Arial", sans-serif;
+      }
+      .container {
+        max-width: 1000px;
+        margin-top: 30px;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .logo {
+        display: block;
+        margin: 0 auto 20px;
+        width: 200px;
+        transition: transform 0.3s ease;
+      }
+      .logo:hover {
+        transform: scale(1.05);
+      }
+      h4 {
+        font-weight: bold;
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .cipher-buttons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .cipher-btn {
+        padding: 12px 25px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #ffffff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .cipher-btn:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+      }
+      .cipher-btn.active {
+        background-color: #28a745;
+      }
+      .cipher-form {
+        display: none;
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      .cipher-form.active {
+        display: block;
+      }
+      .form-group label {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      .result {
+        background-color: #e9ecef;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        min-height: 50px;
+        border-left: 4px solid #007bff;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #6c757d;
+        font-size: 14px;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 15px;
+      }
+      .btn-custom {
+        min-width: 120px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        src="https://file1.hutech.edu.vn/file/editor/homepage/stories/hinh34/logo%20CMYK-01.png"
+        alt="HUTECH Logo"
+        class="logo"
+      />
+      <h4>Bài Thực Hành Bảo Mật Thông Tin Nâng Cao</h4>
+
+      <!-- Cipher Selection Buttons -->
+      <div class="cipher-buttons">
+        <button class="cipher-btn" onclick="showCipher('caesar')">
+          Caesar Cipher
+        </button>
+        <button class="cipher-btn" onclick="showCipher('vigenere')">
+          Vigenère Cipher
+        </button>
+        <button class="cipher-btn" onclick="showCipher('railfence')">
+          Rail Fence Cipher
+        </button>
+        <button class="cipher-btn" onclick="showCipher('playfair')">
+          Playfair Cipher
+        </button>
+        <button class="cipher-btn" onclick="showCipher('transposition')">
+          Transposition Cipher
+        </button>
+      </div>
+
+      <!-- Caesar Cipher Form -->
+      <div id="caesar-form" class="cipher-form">
+        <h5>Caesar Cipher</h5>
+        <div class="form-group">
+          <label>Text:</label>
+          <textarea
+            id="caesar-text"
+            class="form-control"
+            rows="3"
+            placeholder="Enter your text here..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Key (Shift):</label>
+          <input
+            type="number"
+            id="caesar-key"
+            class="form-control"
+            placeholder="Enter shift value (e.g., 3)"
+            min="1"
+            max="25"
+          />
+        </div>
+        <div class="action-buttons">
+          <button class="btn btn-success btn-custom" onclick="caesarEncrypt()">
+            Encrypt
+          </button>
+          <button class="btn btn-warning btn-custom" onclick="caesarDecrypt()">
+            Decrypt
+          </button>
+        </div>
+        <div id="caesar-result" class="result"></div>
+      </div>
+
+      <!-- Vigenère Cipher Form -->
+      <div id="vigenere-form" class="cipher-form">
+        <h5>Vigenère Cipher</h5>
+        <div class="form-group">
+          <label>Text:</label>
+          <textarea
+            id="vigenere-text"
+            class="form-control"
+            rows="3"
+            placeholder="Enter your text here..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Key:</label>
+          <input
+            type="text"
+            id="vigenere-key"
+            class="form-control"
+            placeholder="Enter keyword (e.g., SECRET)"
+          />
+        </div>
+        <div class="action-buttons">
+          <button
+            class="btn btn-success btn-custom"
+            onclick="vigenereEncrypt()"
+          >
+            Encrypt
+          </button>
+          <button
+            class="btn btn-warning btn-custom"
+            onclick="vigenereDecrypt()"
+          >
+            Decrypt
+          </button>
+        </div>
+        <div id="vigenere-result" class="result"></div>
+      </div>
+
+      <!-- Rail Fence Cipher Form -->
+      <div id="railfence-form" class="cipher-form">
+        <h5>Rail Fence Cipher</h5>
+        <div class="form-group">
+          <label>Text:</label>
+          <textarea
+            id="railfence-text"
+            class="form-control"
+            rows="3"
+            placeholder="Enter your text here..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Number of Rails:</label>
+          <input
+            type="number"
+            id="railfence-key"
+            class="form-control"
+            placeholder="Enter number of rails (e.g., 3)"
+            min="2"
+          />
+        </div>
+        <div class="action-buttons">
+          <button
+            class="btn btn-success btn-custom"
+            onclick="railfenceEncrypt()"
+          >
+            Encrypt
+          </button>
+          <button
+            class="btn btn-warning btn-custom"
+            onclick="railfenceDecrypt()"
+          >
+            Decrypt
+          </button>
+        </div>
+        <div id="railfence-result" class="result"></div>
+      </div>
+
+      <!-- Playfair Cipher Form -->
+      <div id="playfair-form" class="cipher-form">
+        <h5>Playfair Cipher</h5>
+        <div class="form-group">
+          <label>Text:</label>
+          <textarea
+            id="playfair-text"
+            class="form-control"
+            rows="3"
+            placeholder="Enter your text here..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Key:</label>
+          <input
+            type="text"
+            id="playfair-key"
+            class="form-control"
+            placeholder="Enter keyword (e.g., MONARCHY)"
+          />
+        </div>
+        <div class="action-buttons">
+          <button
+            class="btn btn-info btn-custom"
+            onclick="createPlayfairMatrix()"
+          >
+            Create Matrix
+          </button>
+          <button
+            class="btn btn-success btn-custom"
+            onclick="playfairEncrypt()"
+          >
+            Encrypt
+          </button>
+          <button
+            class="btn btn-warning btn-custom"
+            onclick="playfairDecrypt()"
+          >
+            Decrypt
+          </button>
+        </div>
+        <div id="playfair-result" class="result"></div>
+      </div>
+
+      <!-- Transposition Cipher Form -->
+      <div id="transposition-form" class="cipher-form">
+        <h5>Transposition Cipher</h5>
+        <div class="form-group">
+          <label>Text:</label>
+          <textarea
+            id="transposition-text"
+            class="form-control"
+            rows="3"
+            placeholder="Enter your text here..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label>Key (Number of Columns):</label>
+          <input
+            type="number"
+            id="transposition-key"
+            class="form-control"
+            placeholder="Enter number of columns (e.g., 4)"
+            min="2"
+          />
+        </div>
+        <div class="action-buttons">
+          <button
+            class="btn btn-success btn-custom"
+            onclick="transpositionEncrypt()"
+          >
+            Encrypt
+          </button>
+          <button
+            class="btn btn-warning btn-custom"
+            onclick="transpositionDecrypt()"
+          >
+            Decrypt
+          </button>
+        </div>
+        <div id="transposition-result" class="result"></div>
+      </div>
+
+      <div class="footer">
+        Designed for HUTECH Students | Bảo Mật Thông Tin Nâng Cao 2025
+      </div>
+    </div>
+
+    <script>
+      // API Base URL - Thay đổi theo server của bạn
+      const API_BASE_URL = "http://127.0.0.1:5000/api";
+
+      // Show cipher form
+      function showCipher(cipherType) {
+        // Hide all forms
+        const forms = document.querySelectorAll(".cipher-form");
+        forms.forEach((form) => {
+          form.classList.remove("active");
+        });
+
+        // Remove active class from all buttons
+        const buttons = document.querySelectorAll(".cipher-btn");
+        buttons.forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        // Show selected form
+        document.getElementById(cipherType + "-form").classList.add("active");
+
+        // Add active class to clicked button
+        event.target.classList.add("active");
+      }
+
+      // API call helper function
+      async function callAPI(endpoint, data) {
+        try {
+          const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("API Error:", error);
+          return {
+            error:
+              "Failed to connect to server. Make sure your Flask API is running on " +
+              API_BASE_URL,
+          };
+        }
+      }
+
+      // Caesar Cipher Functions
+      async function caesarEncrypt() {
+        const text = document.getElementById("caesar-text").value;
+        const key = parseInt(document.getElementById("caesar-key").value);
+
+        if (!text || !key) {
+          document.getElementById("caesar-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and key.";
+          return;
+        }
+
+        const result = await callAPI("/caesar/encrypt", {
+          plain_text: text,
+          Key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "caesar-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "caesar-result"
+          ).innerHTML = `<strong>Encrypted:</strong> ${
+            result.encryoted_message || result.encrypted_text
+          }`;
+        }
+      }
+
+      async function caesarDecrypt() {
+        const text = document.getElementById("caesar-text").value;
+        const key = parseInt(document.getElementById("caesar-key").value);
+
+        if (!text || !key) {
+          document.getElementById("caesar-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and key.";
+          return;
+        }
+
+        const result = await callAPI("/caesar/decrypt", {
+          cipher_text: text,
+          Key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "caesar-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "caesar-result"
+          ).innerHTML = `<strong>Decrypted:</strong> ${
+            result.decryted_message || result.decrypted_text
+          }`;
+        }
+      }
+
+      // Vigenère Cipher Functions
+      async function vigenereEncrypt() {
+        const text = document.getElementById("vigenere-text").value;
+        const key = document.getElementById("vigenere-key").value;
+
+        if (!text || !key) {
+          document.getElementById("vigenere-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and key.";
+          return;
+        }
+
+        const result = await callAPI("/vigenere/encrypt", {
+          plain_text: text,
+          Key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "vigenere-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "vigenere-result"
+          ).innerHTML = `<strong>Encrypted:</strong> ${result.encrypted_text}`;
+        }
+      }
+
+      async function vigenereDecrypt() {
+        const text = document.getElementById("vigenere-text").value;
+        const key = document.getElementById("vigenere-key").value;
+
+        if (!text || !key) {
+          document.getElementById("vigenere-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and key.";
+          return;
+        }
+
+        const result = await callAPI("/vigenere/decrypt", {
+          encrypted_text: text,
+          Key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "vigenere-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "vigenere-result"
+          ).innerHTML = `<strong>Decrypted:</strong> ${result.decrypted_text}`;
+        }
+      }
+
+      // Rail Fence Cipher Functions
+      async function railfenceEncrypt() {
+        const text = document.getElementById("railfence-text").value;
+        const key = parseInt(document.getElementById("railfence-key").value);
+
+        if (!text || !key) {
+          document.getElementById("railfence-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and number of rails.";
+          return;
+        }
+
+        const result = await callAPI("/railfence/encrypt", {
+          plain_text: text,
+          key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "railfence-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "railfence-result"
+          ).innerHTML = `<strong>Encrypted:</strong> ${result.encrypted_text}`;
+        }
+      }
+
+      async function railfenceDecrypt() {
+        const text = document.getElementById("railfence-text").value;
+        const key = parseInt(document.getElementById("railfence-key").value);
+
+        if (!text || !key) {
+          document.getElementById("railfence-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and number of rails.";
+          return;
+        }
+
+        const result = await callAPI("/railfence/decrypt", {
+          cipher_text: text,
+          key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "railfence-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "railfence-result"
+          ).innerHTML = `<strong>Decrypted:</strong> ${result.decrypted_text}`;
+        }
+      }
+
+      // Playfair Cipher Functions
+      async function createPlayfairMatrix() {
+        const key = document.getElementById("playfair-key").value;
+
+        if (!key) {
+          document.getElementById("playfair-result").innerHTML =
+            "<strong>Error:</strong> Please enter a key.";
+          return;
+        }
+
+        const result = await callAPI("/playfair/creatematrix", {
+          key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "playfair-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          let matrix =
+            '<strong>Playfair Matrix:</strong><br><table class="table table-bordered mt-2" style="width: auto; margin: 0 auto;"><tbody>';
+          result.playfair_matrix.forEach((row) => {
+            matrix += "<tr>";
+            row.forEach((cell) => {
+              matrix += `<td style="text-align: center; padding: 8px; font-weight: bold;">${cell}</td>`;
+            });
+            matrix += "</tr>";
+          });
+          matrix += "</tbody></table>";
+          document.getElementById("playfair-result").innerHTML = matrix;
+        }
+      }
+
+      async function playfairEncrypt() {
+        const text = document.getElementById("playfair-text").value;
+        const key = document.getElementById("playfair-key").value;
+
+        if (!text || !key) {
+          document.getElementById("playfair-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and key.";
+          return;
+        }
+
+        const result = await callAPI("/playfair/encrypt", {
+          plain_text: text,
+          key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "playfair-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "playfair-result"
+          ).innerHTML = `<strong>Encrypted:</strong> ${result.encrypted_text}`;
+        }
+      }
+
+      async function playfairDecrypt() {
+        const text = document.getElementById("playfair-text").value;
+        const key = document.getElementById("playfair-key").value;
+
+        if (!text || !key) {
+          document.getElementById("playfair-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and key.";
+          return;
+        }
+
+        const result = await callAPI("/playfair/decrypt", {
+          cipher_text: text,
+          key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "playfair-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "playfair-result"
+          ).innerHTML = `<strong>Decrypted:</strong> ${result.decrypted_text}`;
+        }
+      }
+
+      // Transposition Cipher Functions
+      async function transpositionEncrypt() {
+        const text = document.getElementById("transposition-text").value;
+        const key = parseInt(
+          document.getElementById("transposition-key").value
+        );
+
+        if (!text || !key) {
+          document.getElementById("transposition-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and key.";
+          return;
+        }
+
+        const result = await callAPI("/transposition/encrypt", {
+          plain_text: text,
+          key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "transposition-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "transposition-result"
+          ).innerHTML = `<strong>Encrypted:</strong> ${result.encrypted_text}`;
+        }
+      }
+
+      async function transpositionDecrypt() {
+        const text = document.getElementById("transposition-text").value;
+        const key = parseInt(
+          document.getElementById("transposition-key").value
+        );
+
+        if (!text || !key) {
+          document.getElementById("transposition-result").innerHTML =
+            "<strong>Error:</strong> Please enter both text and key.";
+          return;
+        }
+
+        const result = await callAPI("/transposition/decrypt", {
+          cipher_text: text,
+          key: key,
+        });
+
+        if (result.error) {
+          document.getElementById(
+            "transposition-result"
+          ).innerHTML = `<strong>Error:</strong> ${result.error}`;
+        } else {
+          document.getElementById(
+            "transposition-result"
+          ).innerHTML = `<strong>Decrypted:</strong> ${result.decrypted_text}`;
+        }
+      }
+    </script>
+  </body>
+</html>

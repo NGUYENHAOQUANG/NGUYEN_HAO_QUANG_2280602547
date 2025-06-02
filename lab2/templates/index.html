@@ -1,84 +1,620 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Thực hành Bảo mật thông tin nâng cao</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cipher Tool - Công cụ Mã hóa</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: "Arial", sans-serif;
+      }
+      .container {
+        padding-top: 5rem;
+        padding-bottom: 2rem;
+      }
+      .main-card {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.9);
+      }
+      .card-header {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        text-align: center;
+        padding: 1.5rem;
+      }
+      .cipher-card {
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+        text-align: center;
+        height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .cipher-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        border-color: #667eea;
+      }
+      .cipher-card.selected {
+        border-color: #667eea;
+        background: linear-gradient(
+          45deg,
+          rgba(102, 126, 234, 0.1),
+          rgba(118, 75, 162, 0.1)
+        );
+        transform: scale(1.02);
+      }
+      .cipher-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        color: #667eea;
+      }
+      .cipher-title {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .cipher-desc {
+        font-size: 0.85rem;
+        color: #6c757d;
+      }
+      .form-control,
+      .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+      .btn-custom {
+        border-radius: 25px;
+        padding: 10px 30px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+      }
+      .btn-encrypt {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        border: none;
+        color: white;
+      }
+      .btn-decrypt {
+        background: linear-gradient(45deg, #dc3545, #fd7e14);
+        border: none;
+        color: white;
+      }
+      .btn-matrix {
+        background: linear-gradient(45deg, #6f42c1, #e83e8c);
+        border: none;
+        color: white;
+      }
+      .btn-back {
+        background: linear-gradient(45deg, #6c757d, #495057);
+        border: none;
+        color: white;
+      }
+      .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      .key-hint {
+        font-size: 0.85em;
+        color: #6c757d;
+        margin-top: 5px;
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-        .container {
-            max-width: 800px;
-            margin-top: 50px;
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        .logo {
-            display: block;
-            margin: 0 auto 20px;
-            width: 200px;
-            transition: transform 0.3s ease;
-        }
-        .logo:hover {
-            transform: scale(1.05);
-        }
-        h4 {
-            font-weight: bold;
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            margin: 15px 0;
-            text-align: center;
-        }
-        li a {
-            display: inline-block;
-            padding: 12px 25px;
-            font-size: 18px;
-            font-weight: 500;
-            color: #ffffff;
-            background-color: #007bff;
-            text-decoration: none;
-            border-radius: 25px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        li a:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        }
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #6c757d;
-            font-size: 14px;
-        }
+      }
+      iframe {
+        width: 100%;
+        border: none;
+        background: transparent;
+        min-height: 100px;
+      }
+      .matrix-display {
+        background: rgba(102, 126, 234, 0.1);
+        border: 2px solid #667eea;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 15px 0;
+        text-align: center;
+      }
+      .matrix-table {
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 5px;
+      }
+      .matrix-cell {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border: 2px solid #667eea;
+        border-radius: 8px;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: bold;
+        font-size: 18px;
+        color: #667eea;
+      }
+      .playfair-section {
+        display: none;
+      }
+      .playfair-section.show {
+        display: block;
+      }
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+      .current-cipher {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: bold;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <img src="https://file1.hutech.edu.vn/file/editor/homepage/stories/hinh34/logo%20CMYK-01.png" alt="HUTECH Logo" class="logo">
-        <h4>Bài Thực Hành Bảo Mật Thông Tin Nâng Cao</h4>
-        <ul>
-            <li><a href="/ceasar">Caesar Cipher</a></li>
-            <li><a href="/vigenere">Vigenere Cipher</a></li>
-            <li><a href="/railfence">Railfence Cipher</a></li>
-            <li><a href="/playfair">Vigenere Cipher</a></li>
-            <li><a href="/transitions">Railfence Cipher</a></li>
-        </ul>
-        <div class="footer">
-            Designed for HUTECH Students | Bảo Mật Thông Tin Nâng Cao 2025
+      <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12">
+          <div class="main-card">
+            <div class="card-header">
+              <h1 class="mb-0"><i class="fas fa-lock me-3"></i>Cipher Tool</h1>
+              <p class="mb-0 mt-2">Công cụ Mã hóa & Giải mã Đa năng</p>
+            </div>
+            <div class="card-body p-4">
+              <!-- Cipher Selection Section -->
+              <div id="selectionSection" class="section active">
+                <h5 class="text-center mb-4">
+                  <i class="fas fa-th-large me-2"></i>Chọn phương pháp mã hóa:
+                </h5>
+                <div class="row">
+                  <div class="col-lg-4 col-md-6">
+                    <div class="cipher-card" onclick="selectCipher('caesar')">
+                      <div class="cipher-icon">
+                        <i class="fas fa-coins"></i>
+                      </div>
+                      <div class="cipher-title">Caesar Cipher</div>
+                      <div class="cipher-desc">Mã hóa dịch chuyển ký tự</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-6">
+                    <div class="cipher-card" onclick="selectCipher('playfair')">
+                      <div class="cipher-icon">
+                        <i class="fas fa-th"></i>
+                      </div>
+                      <div class="cipher-title">Playfair Cipher</div>
+                      <div class="cipher-desc">Mã hóa ma trận 5x5</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-6">
+                    <div
+                      class="cipher-card"
+                      onclick="selectCipher('railfence')"
+                    >
+                      <div class="cipher-icon">
+                        <i class="fas fa-project-diagram"></i>
+                      </div>
+                      <div class="cipher-title">Rail Fence Cipher</div>
+                      <div class="cipher-desc">Mã hóa zigzag</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6">
+                    <div
+                      class="cipher-card"
+                      onclick="selectCipher('transposition')"
+                    >
+                      <div class="cipher-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                      </div>
+                      <div class="cipher-title">Transposition Cipher</div>
+                      <div class="cipher-desc">Mã hóa hoán vị cột</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6 col-md-6">
+                    <div class="cipher-card" onclick="selectCipher('vigenere')">
+                      <div class="cipher-icon">
+                        <i class="fas fa-key"></i>
+                      </div>
+                      <div class="cipher-title">Vigenère Cipher</div>
+                      <div class="cipher-desc">Mã hóa đa khóa</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Input Form Section -->
+              <div id="inputSection" class="section">
+                <!-- Current Cipher Display -->
+                <div class="current-cipher" id="currentCipher">
+                  <i class="fas fa-cog me-2"></i>
+                  <span id="currentCipherName">Caesar Cipher</span>
+                </div>
+
+                <!-- Back Button -->
+                <div class="mb-3">
+                  <button
+                    type="button"
+                    class="btn btn-back btn-custom"
+                    onclick="goBack()"
+                  >
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại chọn loại mã
+                    hóa
+                  </button>
+                </div>
+
+                <!-- Text Input -->
+                <div class="mb-3">
+                  <label for="inputText" class="form-label fw-bold">
+                    <i class="fas fa-edit me-2"></i>Nhập văn bản:
+                  </label>
+                  <textarea
+                    class="form-control"
+                    id="inputText"
+                    name="inputText"
+                    rows="4"
+                    placeholder="Nhập văn bản cần mã hóa hoặc giải mã..."
+                  ></textarea>
+                </div>
+
+                <!-- Key Input -->
+                <div class="mb-4">
+                  <label for="inputKey" class="form-label fw-bold">
+                    <i class="fas fa-key me-2"></i>Nhập khóa:
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="inputKey"
+                    name="inputKey"
+                    placeholder="Nhập khóa mã hóa..."
+                  />
+                  <div class="key-hint" id="keyHint"></div>
+                </div>
+
+                <!-- Playfair Matrix Section -->
+                <div class="playfair-section" id="playfairSection">
+                  <div class="mb-3">
+                    <button
+                      type="button"
+                      class="btn btn-matrix btn-custom"
+                      id="generateMatrixBtn"
+                      onclick="generatePlayfairMatrix()"
+                    >
+                      <i class="fas fa-table me-2"></i>Tạo Ma trận Playfair
+                    </button>
+                  </div>
+
+                  <div
+                    class="matrix-display"
+                    id="matrixDisplay"
+                    style="display: none"
+                  >
+                    <h6 class="fw-bold mb-3">
+                      <i class="fas fa-th me-2"></i>Ma trận Playfair:
+                    </h6>
+                    <table class="matrix-table" id="matrixTable">
+                      <!-- Matrix will be generated here -->
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <form action="/encrypt" method="POST" target="resultFrame">
+                      <input
+                        type="hidden"
+                        name="cipher_type"
+                        id="encryptCipherType"
+                      />
+                      <input type="hidden" name="inputText" id="encryptText" />
+                      <input type="hidden" name="inputKey" id="encryptKey" />
+                      <button
+                        type="submit"
+                        class="btn btn-encrypt btn-custom w-100"
+                        onclick="setFormData('encrypt')"
+                      >
+                        <i class="fas fa-lock me-2"></i>Mã hóa
+                      </button>
+                    </form>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <form action="/decrypt" method="POST" target="resultFrame">
+                      <input
+                        type="hidden"
+                        name="cipher_type"
+                        id="decryptCipherType"
+                      />
+                      <input type="hidden" name="inputText" id="decryptText" />
+                      <input type="hidden" name="inputKey" id="decryptKey" />
+                      <button
+                        type="submit"
+                        class="btn btn-decrypt btn-custom w-100"
+                        onclick="setFormData('decrypt')"
+                      >
+                        <i class="fas fa-unlock me-2"></i>Giải mã
+                      </button>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- Result Area -->
+                <div id="resultArea" style="display: none">
+                  <h6 class="fw-bold mb-3">
+                    <i class="fas fa-clipboard-check me-2"></i>Kết quả:
+                  </h6>
+                  <iframe name="resultFrame" id="resultFrame"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</body>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Cipher information
+      const cipherInfo = {
+        caesar: {
+          name: "Caesar Cipher",
+          icon: "fas fa-coins",
+          keyHint: "Nhập số nguyên (1-25). VD: 3, 13, 21...",
+        },
+        playfair: {
+          name: "Playfair Cipher",
+          icon: "fas fa-th",
+          keyHint:
+            "Nhập từ khóa (chữ cái, không trùng lặp). VD: 'MONARCHY', 'KEYWORD'...",
+        },
+        railfence: {
+          name: "Rail Fence Cipher",
+          icon: "fas fa-project-diagram",
+          keyHint: "Nhập số nguyên (2 trở lên). VD: 3, 4, 5... (số rail/hàng)",
+        },
+        transposition: {
+          name: "Transposition Cipher",
+          icon: "fas fa-exchange-alt",
+          keyHint: "Nhập khóa là một số nguyên",
+        },
+        vigenere: {
+          name: "Vigenère Cipher",
+          icon: "fas fa-key",
+          keyHint:
+            "Nhập từ khóa (chỉ chữ cái). VD: 'LEMON', 'CRYPTO', 'SECRET'...",
+        },
+      };
+
+      // Current selected cipher
+      let currentCipherType = "";
+
+      // DOM elements
+      const selectionSection = document.getElementById("selectionSection");
+      const inputSection = document.getElementById("inputSection");
+      const currentCipherName = document.getElementById("currentCipherName");
+      const inputText = document.getElementById("inputText");
+      const inputKey = document.getElementById("inputKey");
+      const keyHint = document.getElementById("keyHint");
+      const resultArea = document.getElementById("resultArea");
+      const playfairSection = document.getElementById("playfairSection");
+      const matrixDisplay = document.getElementById("matrixDisplay");
+      const matrixTable = document.getElementById("matrixTable");
+
+      // Function to select cipher
+      function selectCipher(cipherType) {
+        currentCipherType = cipherType;
+
+        // Update current cipher display
+        currentCipherName.innerHTML = `<i class="${cipherInfo[cipherType].icon} me-2"></i>${cipherInfo[cipherType].name}`;
+        keyHint.textContent = cipherInfo[cipherType].keyHint;
+
+        // Show/hide Playfair section
+        if (cipherType === "playfair") {
+          playfairSection.classList.add("show");
+        } else {
+          playfairSection.classList.remove("show");
+          matrixDisplay.style.display = "none";
+        }
+
+        // Switch to input section
+        selectionSection.classList.remove("active");
+        inputSection.classList.add("active");
+        inputSection.classList.add("fade-in");
+
+        // Reset form
+        inputText.value = "";
+        inputKey.value = "";
+        resultArea.style.display = "none";
+      }
+
+      // Function to go back to selection
+      function goBack() {
+        inputSection.classList.remove("active");
+        selectionSection.classList.add("active");
+        selectionSection.classList.add("fade-in");
+
+        // Reset current cipher
+        currentCipherType = "";
+
+        // Hide matrix display
+        matrixDisplay.style.display = "none";
+        playfairSection.classList.remove("show");
+        resultArea.style.display = "none";
+      }
+
+      // Function to generate Playfair matrix
+      function generatePlayfairMatrix() {
+        const key = inputKey.value.trim().toUpperCase();
+
+        if (!key) {
+          alert("Vui lòng nhập khóa trước khi tạo ma trận!");
+          return;
+        }
+
+        if (!key.match(/^[A-Z]+$/)) {
+          alert("Khóa chỉ được chứa chữ cái (A-Z)!");
+          return;
+        }
+
+        // Create Playfair matrix
+        const matrix = createPlayfairMatrix(key);
+        displayMatrix(matrix);
+      }
+
+      // Function to create Playfair matrix
+      function createPlayfairMatrix(key) {
+        const alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"; // Note: J is omitted, I=J
+        let keyString = "";
+        let used = new Set();
+
+        // Add unique characters from key
+        for (let char of key) {
+          if (char === "J") char = "I"; // Replace J with I
+          if (!used.has(char) && alphabet.includes(char)) {
+            keyString += char;
+            used.add(char);
+          }
+        }
+
+        // Add remaining alphabet characters
+        for (let char of alphabet) {
+          if (!used.has(char)) {
+            keyString += char;
+          }
+        }
+
+        // Create 5x5 matrix
+        const matrix = [];
+        for (let i = 0; i < 5; i++) {
+          matrix[i] = [];
+          for (let j = 0; j < 5; j++) {
+            matrix[i][j] = keyString[i * 5 + j];
+          }
+        }
+
+        return matrix;
+      }
+
+      // Function to display matrix
+      function displayMatrix(matrix) {
+        let tableHTML = "";
+        for (let i = 0; i < 5; i++) {
+          tableHTML += "<tr>";
+          for (let j = 0; j < 5; j++) {
+            tableHTML += `<td class="matrix-cell">${matrix[i][j]}</td>`;
+          }
+          tableHTML += "</tr>";
+        }
+
+        matrixTable.innerHTML = tableHTML;
+        matrixDisplay.style.display = "block";
+        matrixDisplay.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      // Function to set form data before submission
+      function setFormData(operation) {
+        const text = inputText.value.trim();
+        const key = inputKey.value.trim();
+
+        if (!currentCipherType) {
+          alert("Vui lòng chọn phương pháp mã hóa!");
+          return false;
+        }
+
+        if (!text) {
+          alert("Vui lòng nhập văn bản!");
+          return false;
+        }
+
+        if (!key) {
+          alert("Vui lòng nhập khóa!");
+          return false;
+        }
+
+        // Set values for the form being submitted
+        if (operation === "encrypt") {
+          document.getElementById("encryptCipherType").value =
+            currentCipherType;
+          document.getElementById("encryptText").value = text;
+          document.getElementById("encryptKey").value = key;
+        } else {
+          document.getElementById("decryptCipherType").value =
+            currentCipherType;
+          document.getElementById("decryptText").value = text;
+          document.getElementById("decryptKey").value = key;
+        }
+
+        // Show result area
+        resultArea.style.display = "block";
+        resultArea.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+        return true;
+      }
+
+      // Enter key support
+      document.addEventListener("keypress", function (e) {
+        if (e.key === "Enter" && inputSection.classList.contains("active")) {
+          e.preventDefault();
+          if (setFormData("encrypt")) {
+            document.querySelector('form[action="/encrypt"]').submit();
+          }
+        }
+      });
+
+      // Auto-generate matrix when key changes for Playfair
+      inputKey.addEventListener("input", function () {
+        if (currentCipherType === "playfair" && this.value.trim()) {
+          // Add a small delay to avoid too many generations while typing
+          clearTimeout(this.matrixTimeout);
+          this.matrixTimeout = setTimeout(() => {
+            if (this.value.trim().match(/^[A-Za-z]+$/)) {
+              generatePlayfairMatrix();
+            }
+          }, 500);
+        }
+      });
+    </script>
+  </body>
 </html>

@@ -4,12 +4,17 @@ from cipher.railfence import RailFenceCipher
 from cipher.vigenere import VigenereCipher
 from cipher.playfair import PlayFairCipher
 from cipher.transposition import TranspositionCipher
+
 app = Flask(__name__)
 
+# Thêm CORS headers cho mọi response
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
-
-
-# Thêm đoạn sau vào trước hàm main
 # TRANSPOSITION CIPHER ALGORITHM
 transposition_cipher = TranspositionCipher()
 
@@ -28,7 +33,7 @@ def transposition_decrypt():
     key = int(data.get('key'))
     decrypted_text = transposition_cipher.decrypt(cipher_text, key)
     return jsonify({'decrypted_text': decrypted_text})
-# Thêm đoạn sau vào trước hàm main
+
 # PLAYFAIR CIPHER ALGORITHM
 playfair_cipher = PlayFairCipher()
 
@@ -57,7 +62,6 @@ def playfair_decrypt():
     decrypted_text = playfair_cipher.playfair_decrypt(cipher_text, playfair_matrix)
     return jsonify({'decrypted_text': decrypted_text})
 
-# Thêm đoạn sau vào trước hàm main
 # RAILFENCE_CIPHER ALGORITHM
 railfence_cipher = RailFenceCipher()
 
@@ -95,12 +99,11 @@ def vigenere_decrypt():
     decrypted_text = cipher.vigenere_decrypt(encrypted_text, key)
     return jsonify({'decrypted_text': decrypted_text})
 
-caesar_cipher =caesarCipher()
-
+caesar_cipher = caesarCipher()
 
 @app.route("/api/caesar/encrypt", methods=["POST"])
 def caesar_encrypt():
-    data=request.json
+    data = request.json
     plain_text = data['plain_text']
     key = int(data['Key'])
     encrypted_text = caesar_cipher.encrypt_text(plain_text, key)
@@ -115,4 +118,4 @@ def caesar_decrypt():
     return jsonify({'decryted_message': decrypted_text})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=True)
